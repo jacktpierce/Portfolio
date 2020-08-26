@@ -1,0 +1,49 @@
+---
+title: "NFL Betting Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(DT)
+theme_set(theme_classic())
+spread_data <- read.csv("spread_data.csv", stringsAsFactors = F )
+teamtable <- read.csv("teams.csv", stringsAsFactors = F )
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### General and Betting Info on NFL Teams
+
+```{r}
+datatable(teamtable, rownames = FALSE)
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Total Season Scoring by Season
+
+```{r}
+barplot(tapply(spread_data$score_total, spread_data$schedule_season, FUN = sum), ylab = "Total Season Score", xlab = "Season")
+
+```
+
+### Count of Favorite Covers by Spread Type
+
+```{r}
+ggplot(spread_data, aes(x = spread_outlier, y = spread_favorite_result)) +
+  geom_bar(
+
+    stat = "identity", position = position_stack()
+  ) +
+  scale_color_manual(values = c("#0073C2FF", "#EFC000FF"))+
+  scale_fill_manual(values = c("#0073C2FF", "#EFC000FF")) +
+  theme_classic()
+```
+
